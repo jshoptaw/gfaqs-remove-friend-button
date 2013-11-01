@@ -2,11 +2,11 @@
 // @name           GameFAQs "Remove Friend" Button
 // @namespace      OTACON120
 // @author         OTACON120
-// @version        1.0
+// @version        1.1
 // @description    Adds a button to allow one-click friend removal on GameFAQs friend lists
 // @updateURL      http://userscripts.org/scripts/source/131602.meta.js
 // @downloadURL    http://userscripts.org/scripts/source/131602.user.js
-// @website        http://otacon120.com/user-scripts/gamefaqs-related/remove-friend-button/
+// @website        http://otacon120.com/scripts/remove-friend-button/
 // @include        http://www.gamefaqs.com/boards/friends
 // @include        http://www.gamefaqs.com/boards/friends?list=friends*
 // @include        http://www.gamefaqs.com/boards/friends?list=requested*
@@ -17,41 +17,69 @@
 // @match          http://www.gamefaqs.com/boards/friends?list=requested*
 // @match          http://www.gamefaqs.com/boards/friends?list=watching*
 // @match          http://www.gamefaqs.com/boards/friends?list=following*
+// @grant          GM_addStyle
 // ==/UserScript==
 
-function getListName(name) {
-	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
-	var regexS = "[\\?&]" + name + "=([^&#]*)",
-		regex = new RegExp(regexS),
-		results = regex.exec(window.location.href);
+// Fallback for Chrome's lack of GM_* support
+if ( ! this.GM_addStyle || ( this.GM_addStyle.toString && this.GM_addStyle.toString().indexOf('not supported') !== -1 ) ) {
+	function GM_addStyle( aCss ) {
+		'use strict';
+		let head = document.getElementsByTagName( 'head' )[0];
+		if ( head ) {
+		let style = document.createElement( 'style' );
+		style.setAttribute( 'type', 'text/css' );
+		style.textContent = aCss;
+		head.appendChild( style );
+		return style;
+		}
 
-	if (results == null) {
-		return "";
+		return null;
+	}
+}
+
+function getListName( name ) {
+	'use strict';
+	name = name.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+
+	var regexS = "[\\?&]" + name + "=([^&#]*)",
+		regex = new RegExp( regexS ),
+		results = regex.exec( window.location.search );
+
+	if ( results === null ) {
+		return false;
 	} else {
 		return results[1];
 	}
 }
 
-var listName = (getListName('list') != "" ? getListName('list') : 'friends'),
-	listTables = document.getElementById('main_col').getElementsByClassName('help'),
-	i,
-	f,
-	buttonTitle,
+var listName = ( getListName( 'list' ) ? getListName( 'list' ) : 'friends' ),
+	userLists    = document.getElementsByClassName( 'users' ),
 	removeFriendButton = [],
-	buttonCSS = document.createElement('style'),
-	formKey = document.getElementById('side_col').getElementsByClassName('details')[2].getElementsByTagName('input')[0].value;
+	formKey = document.getElementsByName( 'key' )[0].value,
+	i, f, friendItem, friend, buttonTitle;
 
-buttonCSS.textContent = '.remove_friend_button {display: inline-block;} .remove_friend_button input {background: transparent; border: none; color: #F00; padding: 0; margin: 0 0 0 5px; cursor: pointer; vertical-align: text-bottom;}';
+GM_addStyle( '\
+	.remove_friend_button {\
+		display: inline-block;\
+	}\
+\
+	.remove_friend_button input {\
+		background: transparent;\
+		border: none;\
+		color: #F00;\
+		padding: 0;\
+		margin: 0 0 0 5px;\
+		cursor: pointer;\
+		vertical-align: text-bottom;\
+	}' );
 
-document.head.appendChild(buttonCSS);
-	
-for (i = 0; i < listTables.length; i++) {
-	var friendRow = listTables[i].getElementsByTagName('tr');
+for ( i = 0; i < userLists.length; i++ ) {
+	friendItem = userLists[ i ].getElementsByTagName( 'a' );
 
-	for (f = 0; f < friendRow.length; f++) {
-		var friend = friendRow[f].getElementsByTagName('td')[0].textContent;
+	for ( f = 0; f < friendItem.length; f++ ) {
+		friend = friendItem[ f ].textContent;
 
-		switch (listName) {
+		switch ( listName ) {
 			case 'friends':
 				buttonTitle = 'Remove ' + friend + ' from Friends';
 				break;
@@ -68,11 +96,11 @@ for (i = 0; i < listTables.length; i++) {
 				buttonTitle = 'Stop following ' + friend;
 				break;
 		}
-		removeFriendButton[f] = document.createElement('form');
-		removeFriendButton[f].method = 'post';
-		removeFriendButton[f].action = '/boards/friends?list=' + listName + '&action=remove';
-		removeFriendButton[f].className = 'remove_friend_button';
-		removeFriendButton[f].innerHTML = '<input type="hidden" value="' + formKey + '" name="key"/><input type="hidden" value="' + friend + '" name="username"/><input type="submit" value="&#215;" title="' + buttonTitle + '"/>';
-		friendRow[f].getElementsByTagName('td')[0].appendChild(removeFriendButton[f]);
+		removeFriendButton[ f ] = document.createElement('form');
+		removeFriendButton[ f ].method = 'post';
+		removeFriendButton[ f ].action = '/boards/friends?list=' + listName + '&action=remove';
+		removeFriendButton[ f ].className = 'remove_friend_button';
+		removeFriendButton[ f ].innerHTML = '<input type="hidden" value="' + formKey + '" name="key" /><input type="hidden" value="' + friend + '" name="username" /><input type="submit" value="&#215;" title="' + buttonTitle + '" />';
+		friendItem[ f ].parentNode.appendChild( removeFriendButton[ f ] );
 	}
 }

@@ -19,6 +19,12 @@ Use with one of the following browser extensions:
 Release Notes
 =============
 
+Version 1.1
+-----------
+_Released 2013-11-01_
+
+*	Updated to work with v13. From this point on, no site versions prior to v13 will be supported. This includes Throwback Mode.
+
 Version 1.0
 -----------
 _Released 2012-04-22_
