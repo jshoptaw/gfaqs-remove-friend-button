@@ -19,6 +19,12 @@ Use with one of the following browser extensions:
 Release Notes
 =============
 
+Version 1.1.1
+-------------
+_Released 2013-11-05_
+
+*	Fixed a bug where lists that didn't contain links to user profiles (such as Acquaintances) didn't add the "remove friend" button
+
 Version 1.1
 -----------
 _Released 2013-11-01_

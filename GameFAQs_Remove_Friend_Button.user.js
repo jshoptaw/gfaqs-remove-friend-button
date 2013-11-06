@@ -2,7 +2,7 @@
 // @name           GameFAQs "Remove Friend" Button
 // @namespace      OTACON120
 // @author         OTACON120
-// @version        1.1
+// @version        1.1.1
 // @description    Adds a button to allow one-click friend removal on GameFAQs friend lists
 // @updateURL      http://userscripts.org/scripts/source/131602.meta.js
 // @downloadURL    http://userscripts.org/scripts/source/131602.user.js
@@ -74,7 +74,7 @@ GM_addStyle( '\
 	}' );
 
 for ( i = 0; i < userLists.length; i++ ) {
-	friendItem = userLists[ i ].getElementsByTagName( 'a' );
+	friendItem = userLists[ i ].getElementsByTagName( 'li' );
 
 	for ( f = 0; f < friendItem.length; f++ ) {
 		friend = friendItem[ f ].textContent;
@@ -101,6 +101,6 @@ for ( i = 0; i < userLists.length; i++ ) {
 		removeFriendButton[ f ].action = '/boards/friends?list=' + listName + '&action=remove';
 		removeFriendButton[ f ].className = 'remove_friend_button';
 		removeFriendButton[ f ].innerHTML = '<input type="hidden" value="' + formKey + '" name="key" /><input type="hidden" value="' + friend + '" name="username" /><input type="submit" value="&#215;" title="' + buttonTitle + '" />';
-		friendItem[ f ].parentNode.appendChild( removeFriendButton[ f ] );
+		friendItem[ f ].appendChild( removeFriendButton[ f ] );
 	}
 }
