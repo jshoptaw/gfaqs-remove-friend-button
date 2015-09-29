@@ -2,6 +2,8 @@ GameFAQs "Remove Friend" Button
 ======================================
 Adds a button after each username in GameFAQs friend lists to allow one-click friend removal rather than using the "Remove Friend" text box.
 
+## THIS SCRIPT HAS BEEN DISCONTINUED AS OF 2015-09-29 AND WILL NO LONGER BE DEVELOPED ##
+
 Use with one of the following browser extensions:
 
 ### Mozilla Firefox ###
